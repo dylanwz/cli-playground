@@ -84,14 +84,12 @@ export enum Type {
   OBJECT
 }
 
-export enum Problem {
-  CLASSIFICATION,
-  REGRESSION
+export enum Architecture {
+  DNN
 }
 
-export let problems = {
-  "classification": Problem.CLASSIFICATION,
-  "regression": Problem.REGRESSION
+export let architectures = {
+  "dnn": Architecture.DNN
 };
 
 export interface Property {
@@ -128,7 +126,7 @@ export class State {
     {name: "sinY", type: Type.BOOLEAN},
     {name: "collectStats", type: Type.BOOLEAN},
     {name: "tutorial", type: Type.STRING},
-    {name: "problem", type: Type.OBJECT, keyMap: problems},
+    {name: "architecture", type: Type.OBJECT, keyMap: architectures},
     {name: "initZero", type: Type.BOOLEAN},
     {name: "hideText", type: Type.BOOLEAN}
   ];
@@ -144,7 +142,7 @@ export class State {
   percTrainData = 50;
   activation = nn.Activations.TANH;
   regularization: nn.RegularizationFunction = null;
-  problem = Problem.CLASSIFICATION;
+  architecture = Architecture.DNN;
   initZero = false;
   hideText = false;
   collectStats = false;

@@ -20,10 +20,10 @@ import {
   datasets,
   regDatasets,
   activations,
-  problems,
+  architectures,
   regularizations,
   getKeyFromValue,
-  Problem
+  Architecture
 } from "./state";
 import {Example2D, shuffle} from "./dataset";
 import {AppendingLineChart} from "./linechart";
@@ -50,7 +50,6 @@ function scrollTween(offset) {
 const RECT_SIZE = 30;
 const BIAS_SIZE = 5;
 const NUM_SAMPLES_CLASSIFY = 500;
-const NUM_SAMPLES_REGRESS = 1200;
 const DENSITY = 100;
 
 enum HoverType {
@@ -82,7 +81,7 @@ let HIDABLE_CONTROLS = [
   ["Activation", "activation"],
   ["Regularization", "regularization"],
   ["Regularization rate", "regularizationRate"],
-  ["Problem type", "problem"],
+  ["Architecture", "architecture"],
   ["Which dataset", "dataset"],
   ["Ratio train data", "percTrainData"],
   ["Noise level", "noise"],
@@ -353,14 +352,14 @@ function makeGUI() {
   });
   regularRate.property("value", state.regularizationRate);
 
-  let problem = d3.select("#problem").on("change", function() {
-    state.problem = problems[this.value];
+  let architecture = d3.select("#architectures").on("change", function() {
+    state.architecture = architectures[this.value];
     generateData();
     drawDatasetThumbnails();
     parametersChanged = true;
     reset();
   });
-  problem.property("value", getKeyFromValue(problems, state.problem));
+  architecture.property("value", getKeyFromValue(architectures, state.architecture));
 
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);
@@ -953,7 +952,7 @@ function reset(onStartup=false) {
   iter = 0;
   let numInputs = constructInput(0 , 0).length;
   let shape = [numInputs].concat(state.networkShape).concat([1]);
-  let outputActivation = (state.problem === Problem.REGRESSION) ?
+  let outputActivation = (state.architecture === Architecture.DNN) ?
       nn.Activations.LINEAR : nn.Activations.TANH;
   network = nn.buildNetwork(shape, state.activation, outputActivation,
       state.regularization, constructInputIds(), state.initZero);
@@ -1006,19 +1005,11 @@ function drawDatasetThumbnails() {
   }
   d3.selectAll(".dataset").style("display", "none");
 
-  if (state.problem === Problem.CLASSIFICATION) {
+  if (state.architecture === Architecture.DNN) {
     for (let dataset in datasets) {
       let canvas: any =
           document.querySelector(`canvas[data-dataset=${dataset}]`);
       let dataGenerator = datasets[dataset];
-      renderThumbnail(canvas, dataGenerator);
-    }
-  }
-  if (state.problem === Problem.REGRESSION) {
-    for (let regDataset in regDatasets) {
-      let canvas: any =
-          document.querySelector(`canvas[data-regDataset=${regDataset}]`);
-      let dataGenerator = regDatasets[regDataset];
       renderThumbnail(canvas, dataGenerator);
     }
   }
@@ -1072,10 +1063,8 @@ function generateData(firstTime = false) {
     userHasInteracted();
   }
   Math.seedrandom(state.seed);
-  let numSamples = (state.problem === Problem.REGRESSION) ?
-      NUM_SAMPLES_REGRESS : NUM_SAMPLES_CLASSIFY;
-  let generator = state.problem === Problem.CLASSIFICATION ?
-      state.dataset : state.regDataset;
+  let numSamples = NUM_SAMPLES_CLASSIFY;
+  let generator = state.dataset
   let data = generator(numSamples, state.noise / 100);
   // Shuffle the data in-place.
   shuffle(data);
