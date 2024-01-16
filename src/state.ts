@@ -40,6 +40,9 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "xor": dataset.classifyXORData,
   "gauss": dataset.classifyTwoGaussData,
   "spiral": dataset.classifySpiralData,
+  // "tirangle": dataset.classifyTriangleData,
+  // "clover": dataset.classifyCloverData,
+  // "star": dataset.classifyStarData
 };
 
 /** A map between dataset names and functions that generate regression data. */

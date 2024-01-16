@@ -239,3 +239,71 @@ function dist(a: Point, b: Point): number {
   let dy = a.y - b.y;
   return Math.sqrt(dx * dx + dy * dy);
 }
+
+export function classifyCloverData(numSamples: number, noise: number): Example2D[] {
+  function genPoint(t: number): number {
+    let r = 1 + Math.cos(3*t) + Math.pow(Math.sin(3*t), 2);
+    return r;
+  }
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / (numSamples/2);
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = genPoint(t);
+    let x = (r+3) * Math.sin(t) + randUniform(-1, 1) * noise;
+    let y = (r+3) * Math.cos(t) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+    x = 1.2 * (r+1) * Math.sin(t) + randUniform(-1, 1) * noise;
+    y = 1.2 * (r+1) * Math.cos(t) + randUniform(-1, 1) * noise;
+    label = 1;
+    points.push({x, y, label});
+  }
+  return points
+}
+
+export function classifyStarData(numSamples: number, noise: number): Example2D[] {
+  function genPoint(t: number): Point {
+    let x = 4 * Math.cos(t) + Math.cos(4 * t);
+    let y = 4 * Math.sin(t) - Math.sin(4 * t);
+    return {x,y};
+  }
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / (numSamples/2);
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = genPoint(t);
+    let x = 1.1 * (r.x - 0.5) + randUniform(-1, 1) * noise;
+    let y = 1.1 * (r.y) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+    x = 0.7 * (r.x - 0.5) + randUniform(-1, 1) * noise;
+    y = 0.7 * (r.y) + randUniform(-1, 1) * noise;
+    label = 1;
+    points.push({x, y, label});
+  }
+  return points
+}
+
+export function classifyTriangleData(numSamples: number, noise: number): Example2D[] {
+  function genPoint(t: number): Point {
+    let x = 3 * Math.cos(t) + Math.cos(2*t+Math.PI/2);
+    let y = 3 * Math.sin(t) - Math.sin(2*t+Math.PI/2);
+    return {x,y};
+  }
+  let points: Example2D[] = [];
+  let step = (2 * Math.PI) / (numSamples/2);
+  for (let i = 0; i < numSamples/2; i++) {
+    let t = i * step;
+    let r = genPoint(t);
+    let x = 1.4 * (r.x) + randUniform(-1, 1) * noise;
+    let y = 1.4 * (r.y - 0.5) + randUniform(-1, 1) * noise;
+    let label = -1;
+    points.push({x, y, label});
+    x = 0.9 * (r.x) + randUniform(-1, 1) * noise;
+    y = 0.9 * (r.y - 0.5) + randUniform(-1, 1) * noise;
+    label = 1;
+    points.push({x, y, label});
+  }
+  return points
+}
