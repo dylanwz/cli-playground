@@ -305,5 +305,5 @@ export function classifyTriangleData(numSamples: number, noise: number): Example
     label = 1;
     points.push({x, y, label});
   }
-  return points
+  return points;
 }
