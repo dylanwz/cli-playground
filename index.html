@@ -190,9 +190,19 @@ limitations under the License.
             <input class="mdl-slider mdl-js-slider" type="range" id="batchSize" min="1" max="30" step="1">
           </p>
         </div>
-          <button class="basic-button" id="data-regen-button" title="Regenerate data">
-            Regenerate
-          </button>
+        <button class="basic-button" id="data-regen-button" title="Regenerate data">
+          Regenerate
+        </button>
+        <button class="basic-button" id="data-cli-button" title="CMD: Dataset">
+          dataset: >_
+        </button>
+        <div class="modal" id="data-cli-modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <textarea id="data-cli-modal-input" rows="10" cols="50" placeholder="Type your code here..."></textarea>
+            <button onclick="runCode()">Run Code</button>
+          </div>
+        </div>
       </div>
     </div>
 

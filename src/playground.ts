@@ -18,7 +18,6 @@ import {HeatMap, reduceMatrix} from "./heatmap";
 import {
   State,
   datasets,
-  regDatasets,
   activations,
   architectures,
   regularizations,
@@ -205,13 +204,26 @@ function makeGUI() {
     parametersChanged = true;
   });
 
+  d3.select("#data-cli-button").on("click", () => {
+    const modal = document.getElementById('data-cli-modal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  });
+
+  let cliData = d3.select("#cliData").on("input", function() { 
+    state.dataset
+    parametersChanged = true;
+    reset(); 
+  });
+
   let dataThumbnails = d3.selectAll("canvas[data-dataset]");
   dataThumbnails.on("click", function() {
     let newDataset = datasets[this.dataset.dataset];
     if (newDataset === state.dataset) {
       return; // No-op.
     }
-    state.dataset =  newDataset;
+    state.dataset = newDataset;
     dataThumbnails.classed("selected", false);
     d3.select(this).classed("selected", true);
     generateData();
@@ -222,25 +234,6 @@ function makeGUI() {
   let datasetKey = getKeyFromValue(datasets, state.dataset);
   // Select the dataset according to the current state.
   d3.select(`canvas[data-dataset=${datasetKey}]`)
-    .classed("selected", true);
-
-  let regDataThumbnails = d3.selectAll("canvas[data-regDataset]");
-  regDataThumbnails.on("click", function() {
-    let newDataset = regDatasets[this.dataset.regdataset];
-    if (newDataset === state.regDataset) {
-      return; // No-op.
-    }
-    state.regDataset =  newDataset;
-    regDataThumbnails.classed("selected", false);
-    d3.select(this).classed("selected", true);
-    generateData();
-    parametersChanged = true;
-    reset();
-  });
-
-  let regDatasetKey = getKeyFromValue(regDatasets, state.regDataset);
-  // Select the dataset according to the current state.
-  d3.select(`canvas[data-regDataset=${regDatasetKey}]`)
     .classed("selected", true);
 
   d3.select("#add-layers").on("click", () => {
@@ -1007,6 +1000,9 @@ function drawDatasetThumbnails() {
 
   if (state.architecture === Architecture.DNN) {
     for (let dataset in datasets) {
+      if (dataset === "cli") {
+        continue;
+      }
       let canvas: any =
           document.querySelector(`canvas[data-dataset=${dataset}]`);
       let dataGenerator = datasets[dataset];

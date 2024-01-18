@@ -41,13 +41,8 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "spiral": dataset.classifySpiralData,
   "triangle": dataset.classifyTriangleData,
   "clover": dataset.classifyCloverData,
-  "star": dataset.classifyStarData
-};
-
-/** A map between dataset names and functions that generate regression data. */
-export let regDatasets: {[key: string]: dataset.DataGenerator} = {
-  "reg-plane": dataset.regressPlane,
-  "reg-gauss": dataset.regressGaussian
+  "star": dataset.classifyStarData,
+  "cli": dataset.classifyCLIData
 };
 
 export function getKeyFromValue(obj: any, value: any): string {
@@ -108,7 +103,6 @@ export class State {
     {name: "regularization", type: Type.OBJECT, keyMap: regularizations},
     {name: "batchSize", type: Type.NUMBER},
     {name: "dataset", type: Type.OBJECT, keyMap: datasets},
-    {name: "regDataset", type: Type.OBJECT, keyMap: regDatasets},
     {name: "learningRate", type: Type.NUMBER},
     {name: "regularizationRate", type: Type.NUMBER},
     {name: "noise", type: Type.NUMBER},

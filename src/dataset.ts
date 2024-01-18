@@ -307,3 +307,10 @@ export function classifyTriangleData(numSamples: number, noise: number): Example
   }
   return points;
 }
+
+export var classifyCLIData = (numSamples: number, noise: number) => {
+  let x = 0;
+  let y = 0;
+  let label = 1;
+  return [{x,y,label}];
+}
