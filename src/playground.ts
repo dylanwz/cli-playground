@@ -212,6 +212,7 @@ function makeGUI() {
     }
     state.dataset = newDataset;
     dataThumbnails.classed("selected", false);
+    d3.select("#data-cli-button").classed("selected", false);
     d3.select(this).classed("selected", true);
     generateData();
     parametersChanged = true;
