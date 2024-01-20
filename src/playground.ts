@@ -24,7 +24,7 @@ import {
   getKeyFromValue,
   Architecture
 } from "./state";
-import {Example2D, shuffle} from "./dataset";
+import {DataGenerator, Example2D, shuffle, genDataFromCLI} from "./dataset";
 import {AppendingLineChart} from "./linechart";
 import * as d3 from 'd3';
 
@@ -204,19 +204,6 @@ function makeGUI() {
     parametersChanged = true;
   });
 
-  d3.select("#data-cli-button").on("click", () => {
-    const modal = document.getElementById('data-cli-modal');
-    if (modal) {
-      modal.style.display = 'block';
-    }
-  });
-
-  let cliData = d3.select("#cliData").on("input", function() { 
-    state.dataset
-    parametersChanged = true;
-    reset(); 
-  });
-
   let dataThumbnails = d3.selectAll("canvas[data-dataset]");
   dataThumbnails.on("click", function() {
     let newDataset = datasets[this.dataset.dataset];
@@ -273,6 +260,34 @@ function makeGUI() {
   });
   // Check/uncheck the checbox according to the current state.
   discretize.property("checked", state.discretize);
+
+  d3.select("#data-cli-button").on("click", () => {
+    const modal = document.getElementById('data-cli-modal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  });
+  const closeCLIDataModal = () => {
+    const modal = document.getElementById('data-cli-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+  d3.select("#data-cli-modal-close").on("click", () => {
+    closeCLIDataModal();
+  });
+  d3.select("#data-cli-modal-input").on("click", function() { 
+    const cli = document.getElementById('data-cli-modal-textarea') as HTMLTextAreaElement;
+    const cliInput = cli.value;
+    state.dataset = genDataFromCLI(cliInput);
+    const dataThumbnails = d3.selectAll("canvas[data-dataset]");
+    dataThumbnails.classed("selected", false);
+    d3.select("#data-cli-button").classed("selected", true);
+    closeCLIDataModal();
+    generateData();
+    parametersChanged = true;
+    reset();
+  });
 
   let percTrain = d3.select("#percTrainData").on("input", function() {
     state.percTrainData = this.value;

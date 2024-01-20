@@ -41,8 +41,7 @@ export let datasets: {[key: string]: dataset.DataGenerator} = {
   "spiral": dataset.classifySpiralData,
   "triangle": dataset.classifyTriangleData,
   "clover": dataset.classifyCloverData,
-  "star": dataset.classifyStarData,
-  "cli": dataset.classifyCLIData
+  "star": dataset.classifyStarData
 };
 
 export function getKeyFromValue(obj: any, value: any): string {

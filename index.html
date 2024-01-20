@@ -172,6 +172,16 @@ limitations under the License.
         </div>
       </div>
       <div>
+        <button class="basic-button data-cli" id="data-cli-button" title="CMD: Dataset">
+          Command
+        </button>
+        <div class="modal" id="data-cli-modal">
+          <div class="modal-content">
+            <span class="close" id="data-cli-modal-close">&times;</span>
+            <textarea id="data-cli-modal-textarea" rows="40" cols="50" placeholder="Type your code here..."></textarea>
+            <button id="data-cli-modal-input">Run Code</button>
+          </div>
+        </div>
         <div class="ui-percTrainData">
           <label for="percTrainData">Ratio of training to test data:&nbsp;&nbsp;<span class="value">XX</span>%</label>
           <p class="slider">
@@ -193,16 +203,6 @@ limitations under the License.
         <button class="basic-button" id="data-regen-button" title="Regenerate data">
           Regenerate
         </button>
-        <button class="basic-button" id="data-cli-button" title="CMD: Dataset">
-          dataset: >_
-        </button>
-        <div class="modal" id="data-cli-modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <textarea id="data-cli-modal-input" rows="10" cols="50" placeholder="Type your code here..."></textarea>
-            <button onclick="runCode()">Run Code</button>
-          </div>
-        </div>
       </div>
     </div>
 
