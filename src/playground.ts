@@ -276,9 +276,9 @@ function makeGUI() {
   d3.select("#data-cli-modal-close").on("click", () => {
     closeCLIDataModal();
   });
-  d3.select("#data-cli-modal-input").on("click", function() { 
-    const cli = document.getElementById('data-cli-modal-textarea') as HTMLTextAreaElement;
-    const cliInput = cli.value;
+  d3.select("#data-cli-modal-submit").on("click", function() { 
+    const cli = document.getElementById('data-cli-modal-textarea') as HTMLFieldSetElement;
+    const cliInput = cli.innerText;
     state.dataset = genDataFromCLI(cliInput);
     const dataThumbnails = d3.selectAll("canvas[data-dataset]");
     dataThumbnails.classed("selected", false);

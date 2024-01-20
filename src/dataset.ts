@@ -328,13 +328,13 @@ export let genDataFromCLI: (genFnBody: string) => DataGenerator = function (genF
     let step = (2 * Math.PI) / (numSamples/2);
     for (let i = 0; i < numSamples/2; i++) {
       let t = i * step;
-      let r = genPointFn(t);
-      let x = 1.4 * (r.x) + randUniform(-1, 1) * noise;
-      let y = 1.4 * (r.y - 0.5) + randUniform(-1, 1) * noise;
+      let p = genPointFn(t);
+      let x = 1.25 * p.x + randUniform(-1, 1) * noise;
+      let y = 1.25 * p.y + randUniform(-1, 1) * noise;
       let label = -1;
       points.push({x, y, label});
-      x = 0.9 * (r.x) + randUniform(-1, 1) * noise;
-      y = 0.9 * (r.y - 0.5) + randUniform(-1, 1) * noise;
+      x = 0.75 * p.x + randUniform(-1, 1) * noise;
+      y = 0.75 * p.y + randUniform(-1, 1) * noise;
       label = 1;
       points.push({x, y, label});
     }
