@@ -250,7 +250,7 @@ export function buildNetwork(
  *     nodes in the network.
  * @return The final output of the network.
  */
-export function forwardProp(network: Node[][], inputs: number[]): number {
+export let forwardProp = function(network: Node[][], inputs: number[]): number {
   let inputLayer = network[0];
   if (inputs.length !== inputLayer.length) {
     throw new Error("The number of inputs must match the number of nodes in" +
@@ -279,7 +279,7 @@ export function forwardProp(network: Node[][], inputs: number[]): number {
  * derivatives with respect to each node, and each weight
  * in the network.
  */
-export function backProp(network: Node[][], target: number,
+export let backProp = function (network: Node[][], target: number,
     errorFunc: ErrorFunction): void {
   // The output node is a special case. We use the user-defined error
   // function for the derivative.
@@ -332,7 +332,7 @@ export function backProp(network: Node[][], target: number,
  * Updates the weights of the network using the previously accumulated error
  * derivatives.
  */
-export function updateWeights(network: Node[][], learningRate: number,
+export let updateWeights = function (network: Node[][], learningRate: number,
     regularizationRate: number) {
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
@@ -392,4 +392,17 @@ export function forEachNode(network: Node[][], ignoreInputs: boolean,
 /** Returns the output node in the network. */
 export function getOutputNode(network: Node[][]) {
   return network[network.length - 1][0];
+}
+
+export function setForwardProp(fnBody: string): (network: Node[][], inputs: number[]) => number {
+  return new Function("network", "inputs", fnBody) as (network: Node[][], inputs: number[]) => number;
+}
+
+export function setBackProp(fnBody: string): (network: Node[][], target: number, errorFunc: ErrorFunction) => void {
+  return new Function("network", "target", "ErrorFunction", fnBody) as (network: Node[][], target: number, errorFunc: ErrorFunction) => void;
+}
+
+export function setUpdateWeights(fnBody: string): (network: Node[][], learningRate: number,
+  regularizationRate: number) => void {
+  return new Function("network", "learningRate", fnBody) as (network: Node[][], learningRate: number, regularizationRate: number) => void;
 }

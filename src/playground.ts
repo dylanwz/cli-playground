@@ -24,7 +24,7 @@ import {
   getKeyFromValue,
   Architecture
 } from "./state";
-import {DataGenerator, Example2D, shuffle, genDataFromCLI} from "./dataset";
+import {Example2D, shuffle, genDataFromCLI} from "./dataset";
 import {AppendingLineChart} from "./linechart";
 import * as d3 from 'd3';
 
@@ -369,6 +369,34 @@ function makeGUI() {
     reset();
   });
   architecture.property("value", getKeyFromValue(architectures, state.architecture));
+  d3.select("#architecture-cli-button").on("click", () => {
+    const modal = document.getElementById('architecture-cli-modal');
+    if (modal) {
+      modal.style.display = 'block';
+    }
+  });
+  const closeCLIArchitectureModal = () => {
+    const modal = document.getElementById('architecture-cli-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+  d3.select("#architecture-cli-modal-close").on("click", () => {
+    closeCLIArchitectureModal();
+  });
+  d3.select("#architecture-cli-modal-submit").on("click", function() { 
+    const cliBP = document.getElementById('architecture-cli-modal-pillar-bp-textarea') as HTMLFieldSetElement;
+    const cliInputBP = cliBP.innerText;
+    nn.setBackProp(cliInputBP);
+    const cliUW = document.getElementById('architecture-cli-modal-pillar-uw-textarea') as HTMLFieldSetElement;
+    const cliInputUW = cliUW.innerText;
+    nn.setUpdateWeights(cliInputUW);
+    d3.select("#architecture-cli-button").classed("selected", true);
+    closeCLIArchitectureModal();
+    generateData();
+    parametersChanged = true;
+    reset();
+  });
 
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);

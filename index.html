@@ -128,13 +128,122 @@ limitations under the License.
           </select>
         </div>
       </div>
-      <div class="control ui-architecture">
-        <label for="architecture">Architecture</label>
-        <div class="select">
-          <select id="architecture">
-            <option value="DNN">DNN</option>
-            <option value="CNN">CNN</option>
-          </select>
+      <div class="control ui-architecture" style="display: flex; flex-direction: column; align-items: center;">
+        <label style="font-weight: 400; color: black" for="architecture">Architecture</label>
+        <button class="basic-button architecture-cli" id="architecture-cli-button" title="CMD: Architecture">
+          Command
+        </button>
+        <div class="modal" id="architecture-cli-modal">
+          <div class="architecture-cli-modal-content">
+            <h4>Command: Architecture</h4>
+            <hr>
+            <div class="architecture-cli-modal-main-content">
+              <div class="architecture-cli-modal-pillar">
+                Back Propagation
+                <hr>
+                <p style="font-family: monospace">function backProp(network: Node[][], target: number, errorFunc: ErrorFunction) {</p>
+                <span class="architecture-cli-textarea" id="architecture-cli-modal-pillar-bp-textarea" contenteditable="true">
+                  // The output node is a special case. We use the user-defined error<br>
+                  // function for the derivative.<br>
+                  let outputNode = network[network.length - 1][0];<br>
+                  outputNode.outputDer = errorFunc.der(outputNode.output, target);<br>
+                  <br>
+                  // Go through the layers backwards.<br>
+                  for (let layerIdx = network.length - 1; layerIdx >= 1; layerIdx--) {<br>
+                    <span class="tab"></span>let currentLayer = network[layerIdx];<br>
+                    <span class="tab"></span>// Compute the error derivative of each node with respect to:<br>
+                    <span class="tab"></span>// 1) its total input<br>
+                    <span class="tab"></span>// 2) each of its input weights.<br>
+                    <span class="tab"></span>for (let i = 0; i < currentLayer.length; i++) {<br>
+                      <span class="tab"></span><span class="tab"></span>let node = currentLayer[i];<br>
+                      <span class="tab"></span><span class="tab"></span>node.inputDer = node.outputDer * node.activation.der(node.totalInput);<br>
+                      <span class="tab"></span><span class="tab"></span>node.accInputDer += node.inputDer;<br>
+                      <span class="tab"></span><span class="tab"></span>node.numAccumulatedDers++;<br>
+                      <span class="tab"></span>}<br>
+                    <br>
+                    // Error derivative with respect to each weight coming into the node.<br>
+                    <span class="tab"></span>for (let i = 0; i < currentLayer.length; i++) {<br>
+                      <span class="tab"></span><span class="tab"></span>let node = currentLayer[i];<br>
+                      <span class="tab"></span><span class="tab"></span>for (let j = 0; j < node.inputLinks.length; j++) {<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>let link = node.inputLinks[j];<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>if (link.isDead) {<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>continue;<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>}<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>link.errorDer = node.inputDer * link.source.output;<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>link.accErrorDer += link.errorDer;<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>link.numAccumulatedDers++;<br>
+                        <span class="tab"></span><span class="tab"></span>}<br>
+                      <span class="tab"></span>}<br>
+                    <span class="tab"></span>if (layerIdx === 1) {<br>
+                      <span class="tab"></span><span class="tab"></span>continue;<br>
+                    <span class="tab"></span>}<br>
+                    <span class="tab"></span>let prevLayer = network[layerIdx - 1];<br>
+                    <span class="tab"></span>for (let i = 0; i < prevLayer.length; i++) {<br>
+                      <span class="tab"></span><span class="tab"></span>let node = prevLayer[i];<br>
+                      <span class="tab"></span><span class="tab"></span>// Compute the error derivative with respect to each node's output.<br>
+                      <span class="tab"></span><span class="tab"></span>node.outputDer = 0;<br>
+                      <span class="tab"></span><span class="tab"></span>for (let j = 0; j < node.outputs.length; j++) {<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>let output = node.outputs[j];<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>node.outputDer += output.weight * output.dest.inputDer;<br>
+                        <span class="tab"></span><span class="tab"></span>}<br>
+                    <span class="tab"></span>}<br>
+                  }<br>
+                </span>
+                <p style="font-family: monospace">}</p>
+              </div>
+              <div class="architecture-cli-modal-pillar">
+                Update Weights
+                <hr>
+                <p style="font-family: monospace">function backProp(network: Node[][], learningRate: number, regularizationRate: number) {</p>
+                <span class="architecture-cli-textarea" id="architecture-cli-modal-pillar-uw-textarea" contenteditable="true">
+                  for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {<br>
+                    <span class="tab"></span>let currentLayer = network[layerIdx];<br>
+                    <span class="tab"></span>for (let i = 0; i < currentLayer.length; i++) {<br>
+                      <span class="tab"></span><span class="tab"></span>let node = currentLayer[i];<br>
+                      <span class="tab"></span><span class="tab"></span>// Update the node's bias.<br>
+                      <span class="tab"></span><span class="tab"></span>if (node.numAccumulatedDers > 0) {<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>node.accInputDer = 0;<br>
+                        <span class="tab"></span><span class="tab"></span><span class="tab"></span>node.numAccumulatedDers = 0;<br>
+                        <span class="tab"></span><span class="tab"></span>}<br>
+                        <span class="tab"></span><span class="tab"></span>// Update the weights coming into this node.<br>
+                        <span class="tab"></span><span class="tab"></span>for (let j = 0; j < node.inputLinks.length; j++) {<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span>let link = node.inputLinks[j];<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span>if (link.isDead) {<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>continue;<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span>}<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span>let regulDer = link.regularization ?<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>link.regularization.der(link.weight) : 0;<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span>if (link.numAccumulatedDers > 0) {<br>
+                              <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>// Update the weight based on dE/dw.<br>
+                              <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>link.weight = link.weight -
+                              (learningRate / link.numAccumulatedDers) * link.accErrorDer;<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>// Further update the weight based on regularization.<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>let newLinkWeight = link.weight -
+                              (learningRate * regularizationRate) * regulDer;<br>
+                          <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>if (link.regularization === RegularizationFunction.L1 &&
+                              link.weight * newLinkWeight < 0) {<br>
+                            // The weight crossed 0 due to the regularization term. Set it to 0.<br>
+                            link.weight = 0;<br>
+                            link.isDead = true;<br>
+                            <span class="tab"></span><span class="tab"></span><span class="tab"></span>} else {<br>
+                              <span class="tab"></span><span class="tab"></span><span class="tab"></span><span class="tab"></span>link.weight = newLinkWeight;<br>
+                              <span class="tab"></span><span class="tab"></span>}<br>
+                              <span class="tab"></span><span class="tab"></span>link.accErrorDer = 0;<br>
+                              <span class="tab"></span><span class="tab"></span>link.numAccumulatedDers = 0;<br>
+                              <span class="tab"></span>}<br>
+                      }<br>
+                    }<br>
+                  }<br>
+                </span>
+                <p style="font-family: monospace">}</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 1em;">
+              <button class="basic-button" style="background: rgba(241, 75, 75, 0.656); width: 40%;" id="architecture-cli-modal-close">Cancel</span>
+              <button class="basic-button" id="architecture-cli-modal-submit">Run Code</button>
+            </div>
+          </div> 
         </div>
       </div>
     </div>
@@ -176,7 +285,7 @@ limitations under the License.
           Command
         </button>
         <div class="modal" id="data-cli-modal">
-          <div class="modal-content">
+          <div class="data-cli-modal-content">
             <h4>Command: Dataset</h4>
             <hr>
             <p style="font-family: monospace">
